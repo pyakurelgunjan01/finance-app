@@ -24,7 +24,18 @@ export default async function DashboardPage() {
     .reduce((total, transaction) => total + transaction.amount, 0);
 
   const balance = income - expense;
+<div className="mb-6 flex items-center justify-between">
+  <div>
+    <h1 className="text-3xl font-bold tracking-tight">
+      The Royal Ledger
+    </h1>
+    <p className="mt-1 text-sm text-gray-500">
+      Your treasury at a glance.
+    </p>
+  </div>
 
+  <AddTransactionButton />
+</div>
   return (
     <>
       <div className="grid gap-6 md:grid-cols-3">
@@ -48,7 +59,7 @@ export default async function DashboardPage() {
       </div>
 
       <div className="mt-6">
-        <MonthlySummary />
+      <MonthlySummary income={income} expense={expense} />
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-4">
@@ -61,7 +72,6 @@ export default async function DashboardPage() {
         <ExpenseChart transactions={transactions} />
       </div>
 
-      <AddTransactionButton />
 
       <div className="mt-6">
         <RecentTransactions transactions={transactions} />
