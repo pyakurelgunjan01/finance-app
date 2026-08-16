@@ -20,7 +20,7 @@ import {
 
 interface Transaction {
   id: number;
-  date: string;
+  date: Date;
   category: string;
   amount: number;
   type: string;

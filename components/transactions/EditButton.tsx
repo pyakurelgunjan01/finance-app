@@ -6,9 +6,9 @@ import EditTransactionModal from "./EditTransactionModal";
 type Transaction = {
   id: number;
   amount: number;
-  type: string;
   category: string;
-  description?: string;
+  type: string;
+  description: string | null;
   date: Date;
 };
 

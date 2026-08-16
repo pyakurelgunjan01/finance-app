@@ -8,7 +8,7 @@ type Transaction = {
   amount: number;
   type: string;
   category: string;
-  description?: string;
+description: string | null;
   date: Date;
 };
 

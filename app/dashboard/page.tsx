@@ -6,36 +6,43 @@ import QuickActions from "@/components/dashboard/QuickActions";
 import MonthlySummary from "@/components/dashboard/MonthlySummary";
 import IncomeExpenseChart from "@/components/dashboard/IncomeExpenseChart";
 import AddTransactionButton from "@/components/transactions/AddTransactionButton";
+import { prisma } from "@/lib/prisma";
 
 export default async function DashboardPage() {
-const res = await fetch("http://localhost:3000/api/dashboard", {
-  cache: "no-store",
-});
+  const transactions = await prisma.transaction.findMany({
+    orderBy: {
+      date: "desc",
+    },
+  });
 
-  if (!res.ok) {
-    throw new Error("Failed to load dashboard");
-  }
+  const income = transactions
+    .filter((transaction) => transaction.type === "Income")
+    .reduce((total, transaction) => total + transaction.amount, 0);
 
-  const data = await res.json();
+  const expense = transactions
+    .filter((transaction) => transaction.type === "Expense")
+    .reduce((total, transaction) => total + transaction.amount, 0);
+
+  const balance = income - expense;
 
   return (
     <>
       <div className="grid gap-6 md:grid-cols-3">
         <StatsCard
           title="Total Balance"
-          value={`£${data.balance}`}
+          value={`£${balance.toFixed(2)}`}
           type="balance"
         />
 
         <StatsCard
           title="Income"
-          value={`£${data.income}`}
+          value={`£${income.toFixed(2)}`}
           type="income"
         />
 
         <StatsCard
           title="Expenses"
-          value={`£${data.expense}`}
+          value={`£${expense.toFixed(2)}`}
           type="expense"
         />
       </div>
@@ -50,22 +57,15 @@ const res = await fetch("http://localhost:3000/api/dashboard", {
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
-        <IncomeExpenseChart transactions={data.transactions} />
-        <ExpenseChart transactions={data.transactions} />
+        <IncomeExpenseChart transactions={transactions} />
+        <ExpenseChart transactions={transactions} />
       </div>
-
-
-
 
       <AddTransactionButton />
 
-
-
-
       <div className="mt-6">
-        <RecentTransactions transactions={data.transactions} />
+        <RecentTransactions transactions={transactions} />
       </div>
     </>
-    
   );
 }
